@@ -39,7 +39,7 @@ public class StatsController {
             @NotEmpty @RequestParam List<String> uris,
             @RequestParam(defaultValue = "false") Boolean unique
     ) {
-        log.info("GET stats starts {}, end {}, uris {}, unique {}", start, end, uris, unique);
+        log.info("GET stats start {}, end {}, uris {}, unique {}", start, end, uris, unique);
         return statisticsService.getStats(start, end, uris, unique);
     }
 }

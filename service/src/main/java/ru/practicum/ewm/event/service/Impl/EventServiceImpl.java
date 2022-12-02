@@ -24,6 +24,8 @@ import ru.practicum.ewm.event.repository.LocationRepository;
 import ru.practicum.ewm.event.service.EventService;
 import ru.practicum.ewm.exception.NotCorrectConditionException;
 import ru.practicum.ewm.exception.NotFoundException;
+import ru.practicum.ewm.place.PlaceRepository;
+import ru.practicum.ewm.place.model.Place;
 import ru.practicum.ewm.user.UserRepository;
 import ru.practicum.ewm.user.model.User;
 
@@ -45,6 +47,8 @@ public class EventServiceImpl implements EventService {
 
     private final LocationRepository locationRepository;
 
+    private final PlaceRepository placeRepository;
+
     private final EventWebClient eventWebClient;
 
     private static final Long aONE_HOUR_DELAY = 1L;
@@ -53,18 +57,19 @@ public class EventServiceImpl implements EventService {
 
     private static final String aNAME_SERVICE = "ewmservice";
 
-    private static final String aPATH = "events/";
+    private static final String aPATH = "/events/";
 
     public EventServiceImpl(
             EventRepository eventRepository,
             UserRepository userRepository,
             CategoryRepository categoryRepository,
             LocationRepository locationRepository,
-            EventWebClient eventWebClient) {
+            PlaceRepository placeRepository, EventWebClient eventWebClient) {
         this.eventRepository = eventRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.locationRepository = locationRepository;
+        this.placeRepository = placeRepository;
         this.eventWebClient = eventWebClient;
     }
 
@@ -219,6 +224,18 @@ public class EventServiceImpl implements EventService {
         return EventMapper.toEventFullDto(event);
     }
 
+    @Override
+    public List<EventFullDto> getAllEventsInPlaceByAdmin(Long id, int from, int size, LocalDateTime time) {
+        Place place = getPlaceById(id);
+        final Pageable pageable = new EwmPageRequest(from, size, Sort.unsorted());
+        if (time == null) {
+            time = LocalDateTime.now();
+        }
+        List<Event> eventsInPlace = eventRepository
+                .getEventsInPlace(place.getLat(), place.getLon(), place.getRad(), time, pageable);
+        return EventMapper.toEventFullDtoList(eventsInPlace);
+    }
+
     private List<String> makeUris(List<Event> events) {
         return events.stream().map(event -> aPATH + event.getId()).collect(Collectors.toList());
     }
@@ -319,5 +336,10 @@ public class EventServiceImpl implements EventService {
                     String.format("дата и время на которые намечено событие не может быть раньше, " +
                             "чем через %d часа от текущего момента", delay));
         }
+    }
+
+    private Place getPlaceById(Long placeId) {
+        return placeRepository.findById(placeId)
+                .orElseThrow(() -> new NotFoundException(String.format("Place with id=%d was not found", placeId)));
     }
 }

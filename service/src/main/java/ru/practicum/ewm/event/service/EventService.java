@@ -69,5 +69,10 @@ public interface EventService {
      * Получить событие
      */
     EventFullDto getEventPublic(Long id, String requestUri, String remoteAddress);
+
+    /**
+     * Получить все события в конкретном месте админом
+     */
+    List<EventFullDto> getAllEventsInPlaceByAdmin(Long id, int from, int size, LocalDateTime time);
 }
 

@@ -8,6 +8,7 @@ import ru.practicum.ewm.event.enums.EventState;
 import ru.practicum.ewm.event.model.dto.EventFullDto;
 import ru.practicum.ewm.event.model.dto.EventDto;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
@@ -72,5 +73,19 @@ public class EventAdminController {
     public EventFullDto rejectEventByAdmin(@PathVariable Long eventId) {
         log.info("PATCH event {}", eventId);
         return eventService.rejectEventByAdmin(eventId);
+    }
+
+    /**
+     * Получение событий по месту админом
+     */
+    @GetMapping("places")
+    public List<EventFullDto> getAllEventsInPlaceByAdmin(
+            @NotNull @RequestParam Long placeId,
+            @RequestParam(required = false) LocalDateTime time,
+            @PositiveOrZero @RequestParam(required = false, defaultValue = "0") int from,
+            @Positive @RequestParam(required = false, defaultValue = "10") int size
+    ) {
+        log.info("GET all events in place id {}, from {}, size {}, time after {}", placeId, from, size, time);
+        return eventService.getAllEventsInPlaceByAdmin(placeId, from, size, time);
     }
 }
