@@ -6,7 +6,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.Set;
 
 /**
- * A DTO for the Compilation entity
+ * A DTO for the Compolation entity {@link ru.practicum.ewm.compilation.model.Compilation}
  */
 @Setter
 @Getter

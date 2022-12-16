@@ -45,7 +45,7 @@ services:
     image: postgres:14-alpine
     container_name: ewm-db
     ports:
-      - "6541:5430"
+      - "6541:5432"
     volumes:
       - dbewmdata:/var/lib/postgresql/data/
     environment:

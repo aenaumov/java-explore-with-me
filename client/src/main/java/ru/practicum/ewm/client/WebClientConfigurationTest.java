@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  * WebClient configuration
  */
 @Configuration
-public class WebClientConfiguration {
+public class WebClientConfigurationTest {
 
     public static final int TIMEOUT = 1000;
 

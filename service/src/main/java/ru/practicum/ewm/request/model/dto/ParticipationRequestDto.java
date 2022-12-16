@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
- * A DTO for the Request entity
+ * A DTO for the Request entity {@link ru.practicum.ewm.request.model.Request}
  */
 @Setter
 @Getter

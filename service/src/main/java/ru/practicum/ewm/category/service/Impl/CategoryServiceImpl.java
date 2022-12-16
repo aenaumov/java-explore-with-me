@@ -1,7 +1,7 @@
 package ru.practicum.ewm.category.service.Impl;
 
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.category.CategoryMapper;
@@ -9,24 +9,19 @@ import ru.practicum.ewm.category.CategoryRepository;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.model.dto.CategoryDto;
 import ru.practicum.ewm.category.service.CategoryService;
-import ru.practicum.ewm.common.EwmPageRequest;
 import ru.practicum.ewm.exception.NotFoundException;
 
 import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
+@AllArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
-    }
-
     @Override
-    public List<CategoryDto> getAllCategoriesPublic(int from, int size) {
-        final Pageable pageable = new EwmPageRequest(from, size, Sort.unsorted());
+    public List<CategoryDto> getAllCategoriesPublic(Pageable pageable) {
         final List<Category> categories = categoryRepository.findAll(pageable).toList();
         return CategoryMapper.toCategoryDtoList(categories);
     }

@@ -7,7 +7,7 @@ import ru.practicum.ewm.common.Patch;
 import javax.validation.constraints.NotBlank;
 
 /**
- * A DTO for the Category entity
+ * A DTO for the Category entity {@link ru.practicum.ewm.category.model.Category}
  */
 @Setter
 @Getter

@@ -1,5 +1,6 @@
 package ru.practicum.ewm.category.controller;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -15,16 +16,16 @@ import ru.practicum.ewm.common.Patch;
 @Validated
 @RestController
 @RequestMapping(path = "/admin/categories")
+@AllArgsConstructor
 public class CategoryAdminController {
 
     private final CategoryService categoryService;
 
-    public CategoryAdminController(CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
-
     /**
-     * Обновление категории админом
+     * <p>Обновление категории админом</p>
+     *
+     * @param categoryDto {@code CategoryDto} {@link ru.practicum.ewm.category.model.dto.CategoryDto}
+     * @return {@code CategoryDto} {@link ru.practicum.ewm.category.model.dto.CategoryDto}
      */
     @PatchMapping
     public CategoryDto updateCategoryByAdmin(@Validated(Patch.class) @RequestBody CategoryDto categoryDto) {
@@ -33,7 +34,10 @@ public class CategoryAdminController {
     }
 
     /**
-     * Добавление категории админом
+     * <p>Создание категории админом</p>
+     *
+     * @param categoryDto {@code CategoryDto} {@link ru.practicum.ewm.category.model.dto.CategoryDto}
+     * @return {@code CategoryDto} {@link ru.practicum.ewm.category.model.dto.CategoryDto}
      */
     @PostMapping
     public CategoryDto addCategoryByAdmin(@Validated(Create.class) @RequestBody CategoryDto categoryDto) {
@@ -42,7 +46,9 @@ public class CategoryAdminController {
     }
 
     /**
-     * Удаление категории админом
+     * <p>Удаление категории админом</p>
+     *
+     * @param catId {@code Long} id категории
      */
     @DeleteMapping("/{catId}")
     public void deleteCategoryByAdmin(@PathVariable Long catId) {

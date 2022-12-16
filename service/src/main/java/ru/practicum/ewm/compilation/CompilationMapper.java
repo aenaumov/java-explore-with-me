@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Класс для конвертации Compilation в DTO и обратно
+ * Утилитный класс для конвертации Compilation {@link ru.practicum.ewm.compilation.model.Compilation} в DTO и обратно
  */
 public final class CompilationMapper {
 

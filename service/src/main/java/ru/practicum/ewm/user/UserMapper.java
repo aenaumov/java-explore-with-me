@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Класс для конвертации User в DTO и обратно
+ * Утилитный класс для конвертации User {@link ru.practicum.ewm.user.model.User} в DTO и обратно
  */
 public final class UserMapper {
 

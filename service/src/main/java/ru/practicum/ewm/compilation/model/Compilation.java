@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 import java.util.List;
 
 /**
- * Class Compilation
+ * <p>Entity Compilation - подборка событий</p>
  */
 @Entity
 @Table(name = "COMPILATIONS")
@@ -22,17 +22,29 @@ import java.util.List;
 @NoArgsConstructor
 public class Compilation {
 
+    /**
+     * id compilation
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "COMPILATION_ID")
     private Long id;
 
+    /**
+     * список событий, входящих в подборку
+     */
     @OneToMany(cascade = CascadeType.ALL)
     private List<Event> events;
 
+    /**
+     * закрепление (true)/открепление (false) на главной странице
+     */
     @Column(name = "PINNED")
     private Boolean pinned;
 
+    /**
+     * титл подборки
+     */
     @Column(name = "TITLE")
     @Size(max = 255)
     @NotNull

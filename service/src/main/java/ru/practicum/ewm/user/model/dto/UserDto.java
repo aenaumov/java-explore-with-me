@@ -7,7 +7,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
 /**
- * A DTO for the User entity
+ * A DTO for the User entity {@link ru.practicum.ewm.user.model.User}
  */
 
 @Setter

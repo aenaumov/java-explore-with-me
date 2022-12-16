@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 @Service
 @AllArgsConstructor
-public class EventWebClient {
+public class EventWebClientTest {
 
     private static final String HIT_URL_TEMPLATE = "/hit";
     private static final String STATS_URL_TEMPLATE = "/stats";

@@ -3,7 +3,7 @@ package ru.practicum.ewm.model.dto;
 import lombok.*;
 
 /**
- * A DTO for the Hit entity
+ * A DTO for the  ViewStats entity {@link ru.practicum.ewm.model.ViewStats}
  */
 @Setter
 @Getter

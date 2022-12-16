@@ -1,8 +1,12 @@
 package ru.practicum.ewm.event.controller;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.ewm.common.EwmPageRequest;
+import ru.practicum.ewm.event.model.EventParams;
 import ru.practicum.ewm.event.service.EventService;
 import ru.practicum.ewm.event.enums.EventSort;
 import ru.practicum.ewm.event.model.dto.EventFullDto;
@@ -21,16 +25,25 @@ import java.util.List;
 @Validated
 @RestController
 @RequestMapping(path = "/events")
+@AllArgsConstructor
 public class EventPublicController {
 
     private final EventService eventService;
 
-    public EventPublicController(EventService eventService) {
-        this.eventService = eventService;
-    }
-
     /**
-     * Получение всех событий с возможностью фильтрации
+     * <p>Получение всех событий с возможностью фильтрации</p>
+     *
+     * @param text          {@code String} текст для поиска
+     * @param categories    {@code List<Long>} список категорий
+     * @param paid          {@code Boolean} платное/бесплатное участие в событии
+     * @param rangeStart    {@code LocalDateTime} дата начала отбора
+     * @param rangeEnd      {@code LocalDateTime} дата конца отбора
+     * @param onlyAvailable {@code Boolean} только доступные
+     * @param sort          {@code EventSort} сортировка
+     * @param from          {@code int} с какой позиции возвращать элементы
+     * @param size          {@code int} сколько элементов возвращать
+     * @param request       {@code HttpServletRequest} данные запроса
+     * @return список {@code List<EventShortDto>} {@link ru.practicum.ewm.event.model.dto.EventShortDto}
      */
     @GetMapping
     public List<EventShortDto> getAllEventsPublic(
@@ -51,13 +64,31 @@ public class EventPublicController {
                 text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
         log.info("client ip: {}", request.getRemoteAddr());
         log.info("endpoint path: {}", request.getRequestURI());
-        return eventService.getAllEventsPublic(
-                text, categories, paid, rangeStart, rangeEnd, onlyAvailable,
-                sort, from, size, request.getRequestURI(), request.getRemoteAddr());
+
+        Sort eventSort = Sort.unsorted();
+        if (sort != null) {
+            eventSort = Sort.by(Sort.Direction.DESC, sort.getShortName());
+        }
+
+        final EventParams params = EventParams.builder()
+                .text(text)
+                .categories(categories)
+                .paid(paid)
+                .rangeStart(rangeStart)
+                .rangeEnd(rangeEnd)
+                .onlyAvailable(onlyAvailable)
+                .build();
+
+        return eventService.getAllEventsPublic(params, new EwmPageRequest(from, size, eventSort),
+                request.getRequestURI(), request.getRemoteAddr());
     }
 
     /**
-     * Получение кокретного события
+     * <p>Получение кокретного события</p>
+     *
+     * @param id      {@code Long} id события
+     * @param request {@code HttpServletRequest} данные запроса
+     * @return {@code EventFullDto} {@link ru.practicum.ewm.event.model.dto.EventFullDto}
      */
     @GetMapping("/{id}")
     public EventFullDto getEventPublic(@PathVariable Long id, HttpServletRequest request) {

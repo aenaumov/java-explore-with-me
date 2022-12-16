@@ -1,10 +1,9 @@
 package ru.practicum.ewm.user.service.Impl;
 
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.ewm.common.EwmPageRequest;
 import ru.practicum.ewm.user.UserMapper;
 import ru.practicum.ewm.user.UserRepository;
 import ru.practicum.ewm.user.model.User;
@@ -15,21 +14,17 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
     @Override
-    public List<UserDto> getAllUsers(List<Long> ids, int from, int size) {
+    public List<UserDto> getAllUsers(List<Long> ids, Pageable pageable) {
         if (ids != null) {
             final List<User> users = userRepository.findAllById(ids);
             return UserMapper.toUserDtoList(users);
         }
-        final Pageable pageable = new EwmPageRequest(from, size, Sort.unsorted());
         final List<User> users = userRepository.findAll(pageable).toList();
         return UserMapper.toUserDtoList(users);
     }

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Класс для конвертации Request в DTO и обратно
+ * Утилитный класс для конвертации Request {@link ru.practicum.ewm.request.model.Request} в DTO и обратно
  */
 public final class RequestMapper {
 
