@@ -1,10 +1,9 @@
 package ru.practicum.ewm.place.service.Impl;
 
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.ewm.common.EwmPageRequest;
 import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.place.LocationTypeRepository;
 import ru.practicum.ewm.place.PlaceRepository;
@@ -20,17 +19,11 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
+@AllArgsConstructor
 public class PlaceServiceImpl implements PlaceService {
 
     private final LocationTypeRepository locationTypeRepository;
     private final PlaceRepository placeRepository;
-
-    public PlaceServiceImpl(
-            LocationTypeRepository locationTypeRepository,
-            PlaceRepository placeRepository) {
-        this.locationTypeRepository = locationTypeRepository;
-        this.placeRepository = placeRepository;
-    }
 
     @Override
     @Transactional
@@ -48,12 +41,11 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
-    public List<PlaceDto> getAllPlacesByAdmin(List<Long> ids, int from, int size) {
+    public List<PlaceDto> getAllPlacesByAdmin(List<Long> ids, Pageable pageable) {
         if (ids != null) {
             final List<Place> places = placeRepository.findAllById(ids);
             return PlaceMapper.toPlaceDtoList(places);
         }
-        final Pageable pageable = new EwmPageRequest(from, size, Sort.unsorted());
         final List<Place> places = placeRepository.findAll(pageable).toList();
         return PlaceMapper.toPlaceDtoList(places);
     }

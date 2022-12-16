@@ -7,7 +7,7 @@ import ru.practicum.ewm.common.Create;
 import javax.validation.constraints.NotNull;
 
 /**
- * A DTO for the LocationType entity
+ * A DTO for the LocationType entity {@link ru.practicum.ewm.place.model.LocationType}
  */
 @Setter
 @Getter

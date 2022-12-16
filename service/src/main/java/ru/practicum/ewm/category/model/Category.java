@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
- * Class Category
+ * Entity Category - категория события
  */
 @Entity
 @Table(name = "CATEGORIES")
@@ -20,11 +20,17 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class Category {
 
+    /**
+     * <p>id категории</p>
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CATEGORY_ID")
     private Long id;
 
+    /**
+     * <p>name of category</p>
+     */
     @Column(name = "CATEGORY_NAME")
     @Size(max = 50)
     @NotNull

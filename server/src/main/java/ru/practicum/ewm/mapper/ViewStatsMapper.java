@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Класс для конвертации ViewStats в DTO и обратно
+ * Утилитный класс для конвертации ViewStats {@link ru.practicum.ewm.model.ViewStats} в DTO
  */
 
 public final class ViewStatsMapper {

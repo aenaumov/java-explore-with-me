@@ -1,13 +1,10 @@
 package ru.practicum.ewm.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 
 /**
- * Class ViewStats
+ * Entity ViewStats
  */
 @Setter
 @Getter
@@ -15,9 +12,18 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ViewStats {
 
+    /**
+     * name of application the request came from
+     */
     private String app;
 
+    /**
+     * uri of request
+     */
     private String uri;
 
+    /**
+     * ip the request came from
+     */
     private long hits;
 }

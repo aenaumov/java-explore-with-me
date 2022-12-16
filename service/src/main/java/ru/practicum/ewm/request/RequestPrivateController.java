@@ -1,5 +1,6 @@
 package ru.practicum.ewm.request;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -15,17 +16,17 @@ import java.util.List;
 @Validated
 @RestController
 @RequestMapping(path = "/users")
-
+@AllArgsConstructor
 public class RequestPrivateController {
 
     private final RequestService requestService;
 
-    public RequestPrivateController(RequestService requestService) {
-        this.requestService = requestService;
-    }
-
     /**
-     * Получение пользователем своих запросов
+     * <p>Получение пользователем своих запросов на участие в событиях</p>
+     *
+     * @param userId {@code Long} id пользователя
+     * @return список {@code List<ParticipationRequestDto>}
+     * {@link ru.practicum.ewm.request.model.dto.ParticipationRequestDto}
      */
     @GetMapping("/{userId}/requests")
     public List<ParticipationRequestDto> getUserRequests(@PathVariable Long userId) {
@@ -34,7 +35,11 @@ public class RequestPrivateController {
     }
 
     /**
-     * Добавление пользователем запроса
+     * <p>Создание пользователем запроса на участие в событии</p>
+     *
+     * @param userId  {@code Long} id пользователя
+     * @param eventId {@code Long} id события
+     * @return {@code ParticipationRequestDto} {@link ru.practicum.ewm.request.model.dto.ParticipationRequestDto}
      */
     @PostMapping("/{userId}/requests")
     public ParticipationRequestDto postUserRequest(
@@ -45,7 +50,11 @@ public class RequestPrivateController {
     }
 
     /**
-     * Отмена пользователем запроса
+     * <p>Отмена пользователем запроса на участие в событии</p>
+     *
+     * @param userId    {@code Long}  id пользователя
+     * @param requestId {@code Long} id запроса на участие в событии
+     * @return {@code ParticipationRequestDto} {@link ru.practicum.ewm.request.model.dto.ParticipationRequestDto}
      */
     @PatchMapping("/{userId}/requests/{requestId}/cancel")
     public ParticipationRequestDto cancelUserRequest(@PathVariable Long userId,
@@ -55,7 +64,12 @@ public class RequestPrivateController {
     }
 
     /**
-     * Получение всех запросов владельцем события
+     * <p>Получение всех запросов на участие в событии пользователем создавшим это событие</p>
+     *
+     * @param userId  {@code Long} id пользователя
+     * @param eventId {@code Long} id события
+     * @return список {@code List<ParticipationRequestDto>}
+     * {@link ru.practicum.ewm.request.model.dto.ParticipationRequestDto}
      */
     @GetMapping("/{userId}/events/{eventId}/requests")
     public List<ParticipationRequestDto> getAllRequestsInEventByOwner(@PathVariable Long userId,
@@ -65,7 +79,12 @@ public class RequestPrivateController {
     }
 
     /**
-     * Одобрение запроса владельцем события
+     * <p>Одобрение запроса на участие в событии пользователем создавшим это событие</p>
+     *
+     * @param userId  {@code Long} id пользователя
+     * @param eventId {@code Long} id события
+     * @param reqId   {@code Long} id запроса на участие в событии
+     * @return {@code ParticipationRequestDto} {@link ru.practicum.ewm.request.model.dto.ParticipationRequestDto}
      */
     @PatchMapping("/{userId}/events/{eventId}/requests/{reqId}/confirm")
     public ParticipationRequestDto approveParticipationInEventByOwner(@PathVariable Long userId,
@@ -76,7 +95,12 @@ public class RequestPrivateController {
     }
 
     /**
-     * Отмена запроса владельцем события
+     * <p>Отклонение запроса на участие в событии пользователем создавшим это событие</p>
+     *
+     * @param userId  {@code Long} id пользователя
+     * @param eventId {@code Long} id события
+     * @param reqId   {@code Long} id запроса на участие в событии
+     * @return {@code ParticipationRequestDto} {@link ru.practicum.ewm.request.model.dto.ParticipationRequestDto}
      */
     @PatchMapping("/{userId}/events/{eventId}/requests/{reqId}/reject")
     public ParticipationRequestDto rejectParticipationInEventByOwner(@PathVariable Long userId,

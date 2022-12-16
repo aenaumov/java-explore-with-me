@@ -1,5 +1,6 @@
 package ru.practicum.ewm.request;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.event.repository.EventRepository;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
+@AllArgsConstructor
 public class RequestServiceImpl implements RequestService {
 
     private final RequestRepository requestRepository;
@@ -25,15 +27,6 @@ public class RequestServiceImpl implements RequestService {
     private final UserRepository userRepository;
 
     private final EventRepository eventRepository;
-
-    public RequestServiceImpl(
-            RequestRepository requestRepository,
-            UserRepository userRepository,
-            EventRepository eventRepository) {
-        this.requestRepository = requestRepository;
-        this.userRepository = userRepository;
-        this.eventRepository = eventRepository;
-    }
 
     @Override
     public List<ParticipationRequestDto> getUserRequests(Long userId) {

@@ -8,7 +8,7 @@ import ru.practicum.ewm.place.model.LocationType;
 import javax.validation.constraints.*;
 
 /**
- * A DTO for the Place entity
+ * A DTO for the Place entity {@link ru.practicum.ewm.place.model.Place}
  */
 @Setter
 @Getter
@@ -37,6 +37,7 @@ public class PlaceDto {
     @NotNull(groups = {Create.class}, message = "не указана долгота")
     private double lon;
 
+    @PositiveOrZero(groups = {Create.class})
     @NotNull(groups = {Create.class}, message = "не указан радиус")
     private double rad;
 

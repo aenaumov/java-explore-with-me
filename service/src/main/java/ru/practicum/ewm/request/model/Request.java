@@ -12,7 +12,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 /**
- * Class Request
+ * Entity Request - запрос на участие в событии
  */
 @Entity
 @Table(name = "REQUESTS")
@@ -22,22 +22,37 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Request {
 
+    /**
+     * id request
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "REQUEST_ID")
     private Long id;
 
+    /**
+     * дата создания запроса
+     */
     @Column(name = "CREATED")
     private LocalDateTime created;
 
+    /**
+     * событие
+     */
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "EVENT_ID", nullable = false)
     private Event event;
 
+    /**
+     * пользователь подавший запрос на участие в событии
+     */
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "USER_ID", nullable = false)
     private User requester;
 
+    /**
+     * статус запроса
+     */
     @Column(name = "STATUS")
     @Enumerated(EnumType.STRING)
     private RequestStatus status;

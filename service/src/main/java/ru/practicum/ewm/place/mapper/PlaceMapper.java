@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Класс для конвертации Place в DTO и обратно
+ *
+ * Утилитный класс для конвертации Place {@link ru.practicum.ewm.place.model.Place} в DTO и обратно
  */
 public final class PlaceMapper {
 

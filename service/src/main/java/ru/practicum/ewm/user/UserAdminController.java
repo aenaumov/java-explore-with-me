@@ -1,9 +1,12 @@
 package ru.practicum.ewm.user;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.common.Create;
+import ru.practicum.ewm.common.EwmPageRequest;
 import ru.practicum.ewm.user.model.dto.UserDto;
 import ru.practicum.ewm.user.service.UserService;
 
@@ -19,16 +22,18 @@ import java.util.List;
 @Validated
 @RestController
 @RequestMapping(path = "/admin/users")
+@AllArgsConstructor
 public class UserAdminController {
 
     private final UserService userService;
 
-    public UserAdminController(UserService userService) {
-        this.userService = userService;
-    }
-
     /**
-     * Получение всех пользователей админом
+     * <p>Получение всех пользователей админом</p>
+     *
+     * @param ids  {@code List<Long>} список id пользователей
+     * @param from {@code int} с какого элемента вывод
+     * @param size {@code int} количество элементов в выводе
+     * @return список {@code List<UserDto>} {@link ru.practicum.ewm.user.model.dto.UserDto}
      */
     @GetMapping
     public List<UserDto> getAllUsers(
@@ -37,11 +42,14 @@ public class UserAdminController {
             @Positive @RequestParam(required = false, defaultValue = "10") int size
     ) {
         log.info("GET all users, from {}, size {}", from, size);
-        return userService.getAllUsers(ids, from, size);
+        return userService.getAllUsers(ids, new EwmPageRequest(from, size, Sort.unsorted()));
     }
 
     /**
-     * Добавление пользователя админом
+     * <p>Создание пользователя админом</p>
+     *
+     * @param userDto {@code UserDto} {@link ru.practicum.ewm.user.model.dto.UserDto}
+     * @return {@code UserDto} {@link ru.practicum.ewm.user.model.dto.UserDto}
      */
     @PostMapping
     public UserDto postUser(@Validated(Create.class) @RequestBody UserDto userDto) {
@@ -50,7 +58,9 @@ public class UserAdminController {
     }
 
     /**
-     * Удаление пользователя админом
+     * <p>Удаление пользователя админом</p>
+     *
+     * @param userId {@code Long} id пользователя
      */
     @DeleteMapping("/{userId}")
     public void deleteUser(@PathVariable Long userId) {

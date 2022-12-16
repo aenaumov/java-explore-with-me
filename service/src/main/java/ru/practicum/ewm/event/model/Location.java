@@ -8,7 +8,7 @@ import lombok.Setter;
 import javax.persistence.*;
 
 /**
- * Class Location
+ * Entity Location - локация места проведения события
  */
 @Entity
 @Table(name = "LOCATIONS")
@@ -18,14 +18,23 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Location {
 
+    /**
+     * id location
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "LOCATION_ID")
     private Long id;
 
+    /**
+     * широта
+     */
     @Column(name = "LAT")
     private double lat;
 
+    /**
+     * долгота
+     */
     @Column(name = "LON")
     private double lon;
 }

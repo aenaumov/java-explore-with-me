@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * A DTO for the Compolation entity
+ * A DTO for the Compolation entity {@link ru.practicum.ewm.compilation.model.Compilation}
  */
 @Setter
 @Getter

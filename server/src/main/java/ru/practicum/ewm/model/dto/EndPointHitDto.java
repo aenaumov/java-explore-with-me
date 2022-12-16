@@ -6,7 +6,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 /**
- * A DTO for the Hit entity
+ * A DTO for the Hit entity {@link ru.practicum.ewm.model.Hit}
  */
 @Setter
 @Getter

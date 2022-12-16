@@ -1,5 +1,6 @@
 package ru.practicum.ewm.service.impl;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.mapper.HitMapper;
@@ -17,13 +18,10 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
+@AllArgsConstructor
 public class StatisticsServiceImpl implements StatisticsService {
 
     private final StatisticsRepository statisticsRepository;
-
-    public StatisticsServiceImpl(StatisticsRepository statisticsRepository) {
-        this.statisticsRepository = statisticsRepository;
-    }
 
     @Override
     @Transactional

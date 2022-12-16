@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
- * A DTO for the Event entity
+ * A DTO for the Event entity {@link ru.practicum.ewm.event.model.Event}
  */
 @Setter
 @Getter

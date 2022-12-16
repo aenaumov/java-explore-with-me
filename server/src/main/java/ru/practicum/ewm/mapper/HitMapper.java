@@ -4,7 +4,7 @@ import ru.practicum.ewm.model.Hit;
 import ru.practicum.ewm.model.dto.EndPointHitDto;
 
 /**
- * Класс для конвертации Hit в DTO и обратно
+ * Утилитный класс для конвертации Dto в Hit {@link ru.practicum.ewm.model.Hit}
  */
 
 public final class HitMapper {

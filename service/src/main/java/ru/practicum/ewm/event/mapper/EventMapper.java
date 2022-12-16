@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Класс для конвертации Event в DTO и обратно
+ * Класс для конвертации Event {@link ru.practicum.ewm.event.model.Event} в DTO и обратно
  */
 public final class EventMapper {
 

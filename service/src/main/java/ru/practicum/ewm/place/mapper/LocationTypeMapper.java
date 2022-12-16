@@ -4,7 +4,7 @@ import ru.practicum.ewm.place.model.LocationType;
 import ru.practicum.ewm.place.model.dto.LocationTypeDto;
 
 /**
- * Класс для конвертации LocationType в DTO и обратно
+ * Класс для конвертации LocationType {@link ru.practicum.ewm.place.model.LocationType} в DTO и обратно
  */
 public final class LocationTypeMapper {
 

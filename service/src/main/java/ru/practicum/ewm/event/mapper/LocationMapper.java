@@ -4,7 +4,7 @@ import ru.practicum.ewm.event.model.Location;
 import ru.practicum.ewm.event.model.dto.LocationDto;
 
 /**
- * Класс для конвертации Location в DTO и обратно
+ * Класс для конвертации Location {@link ru.practicum.ewm.event.model.Location} в DTO и обратно
  */
 public final class LocationMapper {
 

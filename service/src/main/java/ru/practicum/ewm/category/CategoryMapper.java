@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 
 /**
- * Класс для конвертации Category в DTO и обратно
+ * Утилитный класс для конвертации Category {@link ru.practicum.ewm.category.model.Category} в DTO и обратно
  */
 public final class CategoryMapper {
 

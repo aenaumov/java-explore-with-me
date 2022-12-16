@@ -1,9 +1,12 @@
 package ru.practicum.ewm.event.controller;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.common.Create;
+import ru.practicum.ewm.common.EwmPageRequest;
 import ru.practicum.ewm.common.Patch;
 import ru.practicum.ewm.event.service.EventService;
 import ru.practicum.ewm.event.model.dto.*;
@@ -18,16 +21,18 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping(path = "/users/{userId}/events")
+@AllArgsConstructor
 public class EventPrivateController {
 
     private final EventService eventService;
 
-    public EventPrivateController(EventService eventService) {
-        this.eventService = eventService;
-    }
-
     /**
-     * Получение всех событий владельцем
+     * <p>Получение всех событий пользователем создавшим эти события</p>
+     *
+     * @param userId {@code Long} id пользователя
+     * @param from   {@code int} с какой позиции возвращать элементы
+     * @param size   {@code int} сколько элементов возвращать
+     * @return список {@code List<EventShortDto>} {@link ru.practicum.ewm.event.model.dto.EventFullDto}
      */
     @GetMapping
     public List<EventShortDto> getAllEventsByUser(
@@ -36,11 +41,15 @@ public class EventPrivateController {
             @Positive @RequestParam(required = false, defaultValue = "10") int size
     ) {
         log.info("GET all events user{}, from {}, size {}", userId, from, size);
-        return eventService.getAllEventsByUser(userId, from, size);
+        return eventService.getAllEventsByUser(userId, new EwmPageRequest(from, size, Sort.unsorted()));
     }
 
     /**
-     * Обновление события владельцем
+     * <p>Обновление события пользователем создавшим это событие/p>
+     *
+     * @param userId   {@code Long} id пользователя
+     * @param eventDto {@code EventDto} {@link ru.practicum.ewm.event.model.dto.EventDto}
+     * @return {@code EventFullDto} {@link ru.practicum.ewm.event.model.dto.EventFullDto}
      */
     @PatchMapping
     public EventFullDto updateEventByOwner(@PathVariable Long userId,
@@ -50,7 +59,11 @@ public class EventPrivateController {
     }
 
     /**
-     * Добавление события владельцем
+     * <p>Создание события авторизованным пользователем</p>
+     *
+     * @param userId   {@code Long} id пользователя
+     * @param eventDto {@code EventDto} {@link ru.practicum.ewm.event.model.dto.EventDto}
+     * @return {@code EventFullDto} {@link ru.practicum.ewm.event.model.dto.EventFullDto}
      */
     @PostMapping
     public EventFullDto addEventByUser(@PathVariable Long userId,
@@ -60,7 +73,11 @@ public class EventPrivateController {
     }
 
     /**
-     * Получение события владельцем
+     * <p>Получение события пользователем создавшим это событие</p>
+     *
+     * @param userId  {@code Long} id пользователя
+     * @param eventId {@code Long} id события
+     * @return {@code EventFullDto} {@link ru.practicum.ewm.event.model.dto.EventFullDto}
      */
     @GetMapping("/{eventId}")
     public EventFullDto getEventByOwner(@PathVariable Long userId,
@@ -71,6 +88,10 @@ public class EventPrivateController {
 
     /**
      * Отмена события владельцем
+     *
+     * @param userId  {@code Long} id пользователя
+     * @param eventId {@code Long} id события
+     * @return {@link ru.practicum.ewm.event.model.dto.EventFullDto}
      */
     @PatchMapping("/{eventId}")
     public EventFullDto cancelEventByOwner(@PathVariable Long userId,

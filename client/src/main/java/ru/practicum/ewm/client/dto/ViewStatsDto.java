@@ -1,7 +1,7 @@
 package ru.practicum.ewm.client.dto;
 
-import lombok.*;
 
+import lombok.*;
 
 /**
  * A DTO for the Hit entity

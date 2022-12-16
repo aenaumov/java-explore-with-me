@@ -1,21 +1,20 @@
 package ru.practicum.ewm.event.service.Impl;
 
 import com.querydsl.core.BooleanBuilder;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.ewm.client.EventWebClientTest;
 import ru.practicum.ewm.category.CategoryRepository;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.client.dto.EndPointHitDto;
-import ru.practicum.ewm.client.EventWebClient;
 import ru.practicum.ewm.client.dto.ViewStatsDto;
-import ru.practicum.ewm.common.EwmPageRequest;
-import ru.practicum.ewm.event.enums.EventSort;
 import ru.practicum.ewm.event.enums.EventState;
 import ru.practicum.ewm.event.mapper.EventMapper;
 import ru.practicum.ewm.event.mapper.LocationMapper;
 import ru.practicum.ewm.event.model.Event;
+import ru.practicum.ewm.event.model.EventParams;
 import ru.practicum.ewm.event.model.Location;
 import ru.practicum.ewm.event.model.QEvent;
 import ru.practicum.ewm.event.model.dto.*;
@@ -37,6 +36,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
+@AllArgsConstructor
 public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
@@ -49,7 +49,7 @@ public class EventServiceImpl implements EventService {
 
     private final PlaceRepository placeRepository;
 
-    private final EventWebClient eventWebClient;
+    private final EventWebClientTest eventWebClient;
 
     private static final Long aONE_HOUR_DELAY = 1L;
 
@@ -59,35 +59,14 @@ public class EventServiceImpl implements EventService {
 
     private static final String aPATH = "/events/";
 
-    public EventServiceImpl(
-            EventRepository eventRepository,
-            UserRepository userRepository,
-            CategoryRepository categoryRepository,
-            LocationRepository locationRepository,
-            PlaceRepository placeRepository, EventWebClient eventWebClient) {
-        this.eventRepository = eventRepository;
-        this.userRepository = userRepository;
-        this.categoryRepository = categoryRepository;
-        this.locationRepository = locationRepository;
-        this.placeRepository = placeRepository;
-        this.eventWebClient = eventWebClient;
-    }
+    private static final DateTimeFormatter aFORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
-    public List<EventFullDto> getAllEventsByAdmin(List<Long> users, List<EventState> states,
-                                                  List<Long> categories, LocalDateTime rangeStart,
-                                                  LocalDateTime rangeEnd, int from, int size) {
-        final Pageable pageable = new EwmPageRequest(from, size, Sort.unsorted());
-        BooleanBuilder booleanBuilder = new BooleanBuilder();
-        QEvent event = QEvent.event;
-        booleanBuilder.and(users != null ? event.initiator.id.in(users) : event.initiator.id.isNotNull());
-        booleanBuilder.and(states != null ? event.state.in(states) : event.state.isNotNull());
-        booleanBuilder.and(categories != null ? event.category.id.in(categories) : event.category.id.isNotNull());
-        booleanBuilder.and(rangeStart != null ? event.eventDate.goe(rangeStart) : event.eventDate.isNotNull());
-        booleanBuilder.and(rangeEnd != null ? event.eventDate.loe(rangeEnd) : event.eventDate.isNotNull());
-        List<Event> events = eventRepository.findAll(booleanBuilder, pageable).toList();
+    public List<EventFullDto> getAllEventsByAdmin(EventParams params, Pageable pageable) {
+        List<Event> events = eventRepository.findAll(getBooleanExp(params), pageable).toList();
         return EventMapper.toEventFullDtoList(events);
     }
+
 
     @Override
     @Transactional
@@ -125,8 +104,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventShortDto> getAllEventsByUser(Long userId, int from, int size) {
-        final Pageable pageable = new EwmPageRequest(from, size, Sort.unsorted());
+    public List<EventShortDto> getAllEventsByUser(Long userId, Pageable pageable) {
         final List<Event> events = eventRepository.findAll(pageable).toList();
         return EventMapper.toEventShortDtoList(events);
     }
@@ -174,45 +152,16 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventShortDto> getAllEventsPublic(
-            String text, List<Long> categories, Boolean paid,
-            LocalDateTime rangeStart, LocalDateTime rangeEnd,
-            Boolean onlyAvailable, EventSort eventSort, int from, int size,
-            String requestUri, String remoteAddress) {
-        Sort sort = Sort.unsorted();
-        if (eventSort != null) {
-            switch (eventSort) {
-                case EVENT_DATE:
-                    sort = Sort.by(Sort.Direction.DESC, "eventDate");
-                    break;
-                case VIEWS:
-                    sort = Sort.by(Sort.Direction.DESC, "views");
-            }
-        }
-        final Pageable pageable = new EwmPageRequest(from, size, sort);
-        BooleanBuilder booleanBuilder = new BooleanBuilder();
-        QEvent event = QEvent.event;
-        LocalDateTime timeNow = LocalDateTime.now();
-        booleanBuilder.and(
-                text != null ? event.annotation.likeIgnoreCase("%" + text + "%")
-                        .or(event.description.likeIgnoreCase("%" + text + "%"))
-                        : event.annotation.isNotNull().and(event.description.isNotNull()));
-        booleanBuilder.and(categories != null ? event.category.id.in(categories) : event.category.id.isNotNull());
-        booleanBuilder.and(paid != null ? event.paid.eq(paid) : event.paid.isNotNull());
-        booleanBuilder.and(rangeStart != null ? event.eventDate.goe(rangeStart) : event.eventDate.goe(timeNow));
-        booleanBuilder.and(rangeEnd != null ? event.eventDate.loe(rangeEnd) : event.eventDate.goe(timeNow));
-        booleanBuilder.and(onlyAvailable != null ?
-                (onlyAvailable ? event.confirmedRequests.gt(event.participantLimit)
-                        : event.confirmedRequests.isNotNull())
-                : event.confirmedRequests.isNotNull());
-        List<Event> events = eventRepository.findAll(booleanBuilder, pageable).toList();
+    public List<EventShortDto> getAllEventsPublic(EventParams params, Pageable pageable,
+                                                  String requestUri, String remoteAddress) {
+
+        List<Event> events = eventRepository.findAll(getBooleanExp(params), pageable).toList();
         List<String> uris = makeUris(events);
         List<ViewStatsDto> viewStats = getStats(uris);
         events = compliteEvents(events, viewStats);
         hitToStats(requestUri, remoteAddress);
         return EventMapper.toEventShortDtoList(events);
     }
-
 
     @Override
     public EventFullDto getEventPublic(Long id, String requestUri, String remoteAddress) {
@@ -225,9 +174,8 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventFullDto> getAllEventsInPlaceByAdmin(Long id, int from, int size, LocalDateTime time) {
+    public List<EventFullDto> getAllEventsInPlaceByAdmin(Long id, LocalDateTime time, Pageable pageable) {
         Place place = getPlaceById(id);
-        final Pageable pageable = new EwmPageRequest(from, size, Sort.unsorted());
         if (time == null) {
             time = LocalDateTime.now();
         }
@@ -236,14 +184,54 @@ public class EventServiceImpl implements EventService {
         return EventMapper.toEventFullDtoList(eventsInPlace);
     }
 
+    private BooleanBuilder getBooleanExp(EventParams params) {
+        QEvent event = QEvent.event;
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+        if (params.getOnlyAvailable() != null && params.getOnlyAvailable()) {
+            booleanBuilder.and(event.confirmedRequests.gt(event.participantLimit));
+        }
+
+        if (params.getPaid() != null) {
+            booleanBuilder.and(event.paid.eq(params.getPaid()));
+        }
+
+        if (params.getText() != null) {
+            booleanBuilder.and(event.annotation.likeIgnoreCase("%" + params.getText() + "%")
+                    .or(event.description.likeIgnoreCase("%" + params.getText() + "%")));
+        }
+
+        if (params.getUsers() != null) {
+            booleanBuilder.and(event.initiator.id.in(params.getUsers()));
+        }
+
+        if (params.getStates() != null) {
+            booleanBuilder.and(event.state.in(params.getStates()));
+        }
+
+        if (params.getCategories() != null) {
+            booleanBuilder.and(event.category.id.in(params.getCategories()));
+        }
+
+        if (params.getRangeStart() != null) {
+            booleanBuilder.and(event.eventDate.goe(params.getRangeStart()));
+        }
+
+        if (params.getRangeEnd() != null) {
+            booleanBuilder.and(event.eventDate.loe(params.getRangeEnd()));
+        }
+
+        return booleanBuilder;
+    }
+
     private List<String> makeUris(List<Event> events) {
         return events.stream().map(event -> aPATH + event.getId()).collect(Collectors.toList());
     }
 
     private List<ViewStatsDto> getStats(List<String> uris) {
         return eventWebClient.getStatsSync(
-                LocalDateTime.now().minusYears(1L).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                LocalDateTime.now().minusYears(1L).format(aFORMATTER),
+                LocalDateTime.now().format(aFORMATTER),
                 uris,
                 false
         );

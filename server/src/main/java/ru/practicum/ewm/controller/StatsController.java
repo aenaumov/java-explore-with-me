@@ -1,5 +1,6 @@
 package ru.practicum.ewm.controller;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -21,16 +22,19 @@ import java.util.List;
 @Validated
 @RestController
 @RequestMapping(path = "/stats")
+@AllArgsConstructor
 public class StatsController {
 
     private final StatisticsService statisticsService;
 
-    public StatsController(StatisticsService statisticsService) {
-        this.statisticsService = statisticsService;
-    }
-
     /**
-     * Получение статистики по посещениям
+     * <p>Получение статистики по посещениям</p>
+     *
+     * @param uris   {@code List<String>} список  uri по которым нужна статистика
+     * @param start  {@code LocalDateTime} дата начала выборки статистики
+     * @param end    {@code LocalDateTime} дата конца выборки статистики
+     * @param unique {@code Boolean} если true - получить уникальную статистику
+     * @return список {@code List<ViewStatsDto>} {@link ru.practicum.ewm.model.dto.ViewStatsDto}
      */
     @GetMapping
     public List<ViewStatsDto> getStats(

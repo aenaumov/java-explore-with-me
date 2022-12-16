@@ -1,8 +1,11 @@
 package ru.practicum.ewm.compilation.controller;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.ewm.common.EwmPageRequest;
 import ru.practicum.ewm.compilation.service.CompilationService;
 import ru.practicum.ewm.compilation.model.dto.CompilationDto;
 
@@ -17,16 +20,17 @@ import java.util.List;
 @Validated
 @RestController
 @RequestMapping(path = "/compilations")
+@AllArgsConstructor
 public class CompilationPublicController {
 
     private final CompilationService compilationService;
 
-    public CompilationPublicController(CompilationService compilationService) {
-        this.compilationService = compilationService;
-    }
-
     /**
-     * Получение всех подборок
+     * <p></p>Получение всех подборок
+     *
+     * @param from {@code int} с какого элемента возвращать
+     * @param size {@code int} сколько элементов возвращать
+     * @return {@code List<CompilationDto>} {@link ru.practicum.ewm.compilation.model.dto.CompilationDto}
      */
     @GetMapping
     public List<CompilationDto> getAllCompilationsPublic(
@@ -35,11 +39,14 @@ public class CompilationPublicController {
             @Positive @RequestParam(required = false, defaultValue = "10") int size
     ) {
         log.info("GET all compilations pinned {}, from {}, size {}", pinned, from, size);
-        return compilationService.getAllCompilationsPublic(pinned, from, size);
+        return compilationService.getAllCompilationsPublic(pinned, new EwmPageRequest(from, size, Sort.unsorted()));
     }
 
     /**
-     * Получение конкретной подборки
+     * <p>Получение конкретной подборки</p>
+     *
+     * @param compId {@code Long} id подборки
+     * @return {@code CompilationDto} {@link ru.practicum.ewm.compilation.model.dto.CompilationDto}
      */
     @GetMapping("/{compId}")
     public CompilationDto getCompilationPublic(@PathVariable Long compId) {

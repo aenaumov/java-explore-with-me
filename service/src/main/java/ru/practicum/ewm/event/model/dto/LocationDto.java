@@ -3,7 +3,7 @@ package ru.practicum.ewm.event.model.dto;
 import lombok.*;
 
 /**
- * A DTO for the Event entity
+ * A DTO for the Location entity {@link ru.practicum.ewm.event.model.Location}
  */
 @Setter
 @Getter

@@ -1,10 +1,9 @@
 package ru.practicum.ewm.compilation.service.Impl;
 
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.ewm.common.EwmPageRequest;
 import ru.practicum.ewm.compilation.CompilationMapper;
 import ru.practicum.ewm.compilation.CompilationRepository;
 import ru.practicum.ewm.compilation.model.Compilation;
@@ -19,20 +18,15 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
+@AllArgsConstructor
 public class CompilationServiceImpl implements CompilationService {
 
     private final CompilationRepository compilationRepository;
 
     private final EventRepository eventRepository;
 
-    public CompilationServiceImpl(CompilationRepository compilationRepository, EventRepository eventRepository) {
-        this.compilationRepository = compilationRepository;
-        this.eventRepository = eventRepository;
-    }
-
     @Override
-    public List<CompilationDto> getAllCompilationsPublic(Boolean pinned, int from, int size) {
-        final Pageable pageable = new EwmPageRequest(from, size, Sort.unsorted());
+    public List<CompilationDto> getAllCompilationsPublic(Boolean pinned, Pageable pageable) {
         List<Compilation> compilations = compilationRepository.findAllByPinnedIs(pinned, pageable);
         return CompilationMapper.toCompilationDtoList(compilations);
     }
