@@ -29,8 +29,7 @@ import java.util.List;
 @AllArgsConstructor
 public class EventAdminController {
 
-//    TODO check !!!
-    Logbook logbook = Logbook.create();
+    Logbook logbook;
 
     private final EventService eventService;
 
