@@ -29,8 +29,7 @@ public class PlaceAdminController {
 
     private final PlaceService placeService;
 
-//    TODO check!!!
-    Logbook logbook = Logbook.create();
+    Logbook logbook;
 
     /**
      * <p>Создание типа локации админом</p>
