@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.zalando.logbook.Logbook;
 import ru.practicum.ewm.common.EwmPageRequest;
+import ru.practicum.ewm.common.ValueOfEnum;
 import ru.practicum.ewm.event.model.EventParams;
 import ru.practicum.ewm.event.service.EventService;
 import ru.practicum.ewm.event.enums.EventState;
@@ -17,7 +18,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Controller end-point "/admin/events"
@@ -48,7 +51,7 @@ public class EventAdminController {
     @GetMapping
     public List<EventFullDto> getAllEventsByAdmin(
             @RequestParam(required = false) List<Long> users,
-            @RequestParam(required = false) List<EventState> states,
+            @RequestParam(required = false) List<String> states,
             @RequestParam(required = false) List<Long> categories,
             @RequestParam(required = false) LocalDateTime rangeStart,
             @RequestParam(required = false) LocalDateTime rangeEnd,
@@ -59,11 +62,16 @@ public class EventAdminController {
                         " rangeStart: {}, rangeEnd: {}, from: {}, size: {}",
                 users, states, categories, rangeStart, rangeEnd, from, size);
 
-//        TODO check EventState !!!
+        @ValueOfEnum(enumClass = EventState.class) List<EventState> es = new ArrayList<>();
+
+        if (states != null) {
+            es = states.stream()
+                    .map(EventState::valueOf).collect(Collectors.toList());
+        }
 
         final EventParams params = EventParams.builder()
                 .users(users)
-                .states(states)
+                .states(es)
                 .categories(categories)
                 .rangeStart(rangeStart)
                 .rangeEnd(rangeEnd)

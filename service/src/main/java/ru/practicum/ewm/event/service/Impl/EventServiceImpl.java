@@ -205,7 +205,7 @@ public class EventServiceImpl implements EventService {
             booleanBuilder.and(event.initiator.id.in(params.getUsers()));
         }
 
-        if (params.getStates() != null) {
+        if (params.getStates() != null && !params.getStates().isEmpty()) {
             booleanBuilder.and(event.state.in(params.getStates()));
         }
 
