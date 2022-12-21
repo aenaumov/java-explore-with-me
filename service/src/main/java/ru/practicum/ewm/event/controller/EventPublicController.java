@@ -11,6 +11,7 @@ import ru.practicum.ewm.event.service.EventService;
 import ru.practicum.ewm.event.enums.EventSort;
 import ru.practicum.ewm.event.model.dto.EventFullDto;
 import ru.practicum.ewm.event.model.dto.EventShortDto;
+import ru.practicum.ewm.common.ValueOfEnum;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Positive;
@@ -54,7 +55,7 @@ public class EventPublicController {
             @RequestParam(required = false) LocalDateTime rangeStart,
             @RequestParam(required = false) LocalDateTime rangeEnd,
             @RequestParam(required = false, defaultValue = "false") Boolean onlyAvailable,
-            @RequestParam(required = false) EventSort sort,
+            @RequestParam(required = false) String sort,
             @PositiveOrZero @RequestParam(required = false, defaultValue = "0") int from,
             @Positive @RequestParam(required = false, defaultValue = "10") int size
 
@@ -67,7 +68,8 @@ public class EventPublicController {
 
         Sort eventSort = Sort.unsorted();
         if (sort != null) {
-            eventSort = Sort.by(Sort.Direction.DESC, sort.getShortName());
+            @ValueOfEnum(enumClass = EventSort.class) EventSort es = EventSort.valueOf(sort);
+            eventSort = Sort.by(Sort.Direction.DESC, es.getShortName());
         }
 
         final EventParams params = EventParams.builder()
@@ -84,7 +86,7 @@ public class EventPublicController {
     }
 
     /**
-     * <p>Получение кокретного события</p>
+     * <p>Получение конкретного события</p>
      *
      * @param id      {@code Long} id события
      * @param request {@code HttpServletRequest} данные запроса
