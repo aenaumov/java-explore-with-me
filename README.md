@@ -6,6 +6,7 @@
 ## Used stack
 - Java 11
 - Spring Boot
+- Spring REST
 - Spring Data
 - Spring Web
 - Spring JPA
